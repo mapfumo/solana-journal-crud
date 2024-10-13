@@ -1,6 +1,4 @@
-# crud-app
-
-This project is a preview. Please give feedback to [beeman](https://x.com/beeman_nl) on X.
+# Journal CRUD App
 
 ## Getting Started
 
@@ -17,8 +15,8 @@ This project is a preview. Please give feedback to [beeman](https://x.com/beeman
 #### Clone the repo
 
 ```shell
-git clone <repo-url>
-cd <repo-name>
+git clone https://github.com/mapfumo/solana-journal-crud.git
+cd solana-journal-crud
 ```
 
 #### Install Dependencies
