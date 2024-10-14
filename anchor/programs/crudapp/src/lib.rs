@@ -4,7 +4,7 @@
 
 use anchor_lang::prelude::*;
 
-declare_id!("AsjZ3kWAUSQRNt2pZVeJkywhZ6gpLpHZmJjduPmKZDZZ");
+declare_id!("pBURaAzkaUyxRYukW33vhV2eGJpuo6RnCuDM3XcHgoA");
 
 #[program]
 // `#[program]` macro declares this as the main entry point for your smart contract.
