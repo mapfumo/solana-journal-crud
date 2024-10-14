@@ -100,93 +100,63 @@ export function CrudappList() {
 }
 
 function CrudappCard({ account }: { account: PublicKey }) {
-  const {
-    accountQuery,
-    incrementMutation,
-    setMutation,
-    decrementMutation,
-    closeMutation,
-  } = useCrudappProgramAccount({
+  const { accountQuery, updateEntry, deleteEntry } = useCrudappProgramAccount({
     account,
   });
+  const { createEntry } = useCrudappProgram();
 
-  const count = useMemo(
-    () => accountQuery.data?.count ?? 0,
-    [accountQuery.data?.count]
-  );
+  const { publicKey } = useWallet();
+  const [message, setMessage] = useState("");
+  const title = accountQuery.data?.title;
+
+  const isFormValid = message.trim() != "";
+
+  const handleSubmit = () => {
+    if (publicKey && isFormValid) {
+      createEntry.mutateAsync({
+        title,
+        message,
+        owner: publicKey,
+      });
+    }
+  };
+
+  if (!publicKey) {
+    return (
+      <div className="alert alert-info flex justify-center">
+        <span>Connect your wallet to create a journal entry.</span>
+      </div>
+    );
+  }
 
   return accountQuery.isLoading ? (
     <span className="loading loading-spinner loading-lg"></span>
   ) : (
     <div className="card card-bordered border-base-300 border-4 text-neutral-content">
       <div className="card-body items-center text-center">
-        <div className="space-y-6">
-          <h2
-            className="card-title justify-center text-3xl cursor-pointer"
-            onClick={() => accountQuery.refetch()}
+        <div className="space-y-4"></div>
+        <h2
+          className="card-title justify-center text-3xl cursor-pointer"
+          onClick={() => accountQuery.refetch()}
+        >
+          {accountQuery.data?.title}
+        </h2>
+        <p>{accountQuery.data?.message}</p>
+        <div className="card-actions">
+          <button
+            onClick={handleSubmit}
+            disabled={!isFormValid || updateEntry.isPending}
+            className="btn btn-xs btn-primary"
           >
-            {count}
-          </h2>
-          <div className="card-actions justify-around">
-            <button
-              className="btn btn-xs lg:btn-md btn-outline"
-              onClick={() => incrementMutation.mutateAsync()}
-              disabled={incrementMutation.isPending}
-            >
-              Increment
-            </button>
-            <button
-              className="btn btn-xs lg:btn-md btn-outline"
-              onClick={() => {
-                const value = window.prompt(
-                  "Set value to:",
-                  count.toString() ?? "0"
-                );
-                if (
-                  !value ||
-                  parseInt(value) === count ||
-                  isNaN(parseInt(value))
-                ) {
-                  return;
-                }
-                return setMutation.mutateAsync(parseInt(value));
-              }}
-              disabled={setMutation.isPending}
-            >
-              Set
-            </button>
-            <button
-              className="btn btn-xs lg:btn-md btn-outline"
-              onClick={() => decrementMutation.mutateAsync()}
-              disabled={decrementMutation.isPending}
-            >
-              Decrement
-            </button>
-          </div>
-          <div className="text-center space-y-4">
-            <p>
-              <ExplorerLink
-                path={`account/${account}`}
-                label={ellipsify(account.toString())}
-              />
-            </p>
-            <button
-              className="btn btn-xs btn-secondary btn-outline"
-              onClick={() => {
-                if (
-                  !window.confirm(
-                    "Are you sure you want to close this account?"
-                  )
-                ) {
-                  return;
-                }
-                return closeMutation.mutateAsync();
-              }}
-              disabled={closeMutation.isPending}
-            >
-              Close
-            </button>
-          </div>
+            Update
+          </button>
+          <button
+            onClick={() => deleteEntry.mutate(title)}
+            disabled={deleteEntry.isPending}
+            className="btn btn-xs btn-error"
+          >
+            Delete
+          </button>
         </div>
       </div>
     </div>

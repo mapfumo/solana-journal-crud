@@ -101,5 +101,6 @@ export function useCrudappProgramAccount({ account }: { account: PublicKey }) {
     accountQuery,
     updateEntry,
     deleteEntry,
+    program,
   };
 }
